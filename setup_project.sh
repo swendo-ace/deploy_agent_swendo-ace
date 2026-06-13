@@ -1,4 +1,15 @@
 #!/bin/bash
+
+trap_handler() {
+    echo "Interrupt received! Archiving and cleaning up..."
+    tar -czf "attendance_tracker_${foldername}_archive.tar.gz" "attendance_tracker_$foldername"
+    rm -rf "attendance_tracker_$foldername"
+    echo "Archive created and incomplete directory deleted. Exiting."
+    exit 1
+}
+
+trap trap_handler SIGINT
+
 echo "Welcome to the attendance_tracker!"
 read -p "What would you like to name your folder? " foldername
 echo "Hello, $foldername!"
@@ -63,3 +74,19 @@ def run_attendance_check():
 if __name__ == "__main__":
     run_attendance_check()
 INNEREOF
+if command -v python3 &> /dev/null
+then
+    echo "python3 is installed - Health Check Passed!"
+else
+    echo "WARNING: python3 is not installed. Please install it before running the attendance checker."
+fi
+read -p "Do you want to update the attendance thresholds? (yes/no): " update_choice
+if [ "$update_choice" = "yes" ]
+then
+    read -p "Enter new Warning threshold (default 75): " warning_val
+    read -p "Enter new Failure threshold (default 50): " failure_val
+    sed -i "s/\"warning\": [0-9]*/\"warning\": $warning_val/" "attendance_tracker_$foldername/Helpers/config.json"
+    sed -i "s/\"failure\": [0-9]*/\"failure\": $failure_val/" "attendance_tracker_$foldername/Helpers/config.json"
+    echo "Thresholds updated successfully!"
+fi
+echo "Setup complete! Your project is ready at attendance_tracker_$foldername"

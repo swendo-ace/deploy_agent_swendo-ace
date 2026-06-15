@@ -13,6 +13,13 @@ trap trap_handler SIGINT
 echo "Welcome to the attendance_tracker!"
 read -p "What would you like to name your folder? " foldername
 echo "Hello, $foldername!"
+
+if [ -d "attendance_tracker_$foldername" ]
+then
+    echo "This folder already exists. Please choose a different name."
+    exit 1
+fi
+
 mkdir -p "attendance_tracker_$foldername" "attendance_tracker_$foldername/Helpers" "attendance_tracker_$foldername/reports"
 cat > "attendance_tracker_$foldername/Helpers/config.json" << 'INNEREOF'
 {
@@ -85,6 +92,16 @@ if [ "$update_choice" = "yes" ]
 then
     read -p "Enter new Warning threshold (default 75): " warning_val
     read -p "Enter new Failure threshold (default 50): " failure_val
+    if ! [[ "$warning_val" =~ ^[0-9]+$ ]]
+    then
+        echo "Invalid input. Warning threshold must be a number."
+        exit 1
+    fi
+    if ! [[ "$failure_val" =~ ^[0-9]+$ ]]
+    then
+        echo "Invalid input. Failure threshold must be a number."
+        exit 1
+    fi
     sed -i "s/\"warning\": [0-9]*/\"warning\": $warning_val/" "attendance_tracker_$foldername/Helpers/config.json"
     sed -i "s/\"failure\": [0-9]*/\"failure\": $failure_val/" "attendance_tracker_$foldername/Helpers/config.json"
     echo "Thresholds updated successfully!"

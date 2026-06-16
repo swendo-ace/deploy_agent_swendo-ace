@@ -21,3 +21,5 @@ While the script is running, press Ctrl+C on your keyboard after entering
 your folder name. The script will automatically bundle the incomplete 
 project directory into a compressed archive file and delete the incomplete 
 folder to keep your workspace clean.
+
+Link to video explanation: https://drive.google.com/file/d/1q9l2K8UO_vTNrE0Y6roDFtAH-Z5QoNi4/view?usp=sharing
